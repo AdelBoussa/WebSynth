@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.38/Tone.js"></script>
+<style>
+	#container{
+		position:absolute;
+		height: 200px;
+		border:  5px solid black;
+		top: calc(50% - 100px); 
+		left: calc(50% - 350px); 
+		overflow: hidden;
+	}
+	.whitenote {
+		height: 100%;
+		width:  50px;
+		background:white;
+		float:left;
+		border-right: 1px solid black;
+		position:relative;
+	}
+	.blacknote {
+		position:absolute;
+		height: 65%;
+		width: 55%;
+		z-index: 1;
+		background:#777;
+		left: 71%;
+	}
+	.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+
+</style>
+
+
+<title> WebSynth </title>
+</head>
+<body>
+	<label class="switch">
+  		<input type="checkbox" id="myCheck" onclick="waveType()">
+  		<p id="text" style="display:none">Sine</p>
+  		<p id="type" style="display:none">Square</p>
+  		<span class="slider round"></span>
+</label>
+
+
+
+
+<div id='container'>
+</div>
+
+<script>
+	var synth = new Tone.Synth().toMaster();
+
+	var notes = ['C','D','E','F','G','A','B'];
+	var html = '';
+
+for (var octave = 0; octave <2; octave++)
+{
+	for (var i =0; i<notes.length; i++)
+	{
+		var hasSharp = true;
+		var note = notes[i];
+
+		if (note == 'E' || note == 'B')
+			hasSharp = false;
+
+		html += `<div class='whitenote' onmousedown='noteDown(this, false)' onmouseup='noteUp(this, false)' onmouseleave='noteUp(this, false)' data-note='${note + (octave+4)}'>`;
+
+		if(hasSharp){
+		html += `<div class='blacknote' onmousedown='noteDown(this, true)' onmouseup='noteUp(this, true)' onmouseleave='noteUp(this, true)' data-note='${note + '#' +(octave+4)}'></div>`;
+		}
+		html += '</div>';
+	}
+
+		
+	}
+
+document.getElementById('container').innerHTML = html;
+
+function noteUp(elem, isSharp){
+
+	elem.style.background = isSharp ? '#777' : 'white';
+}
+function noteDown(elem, isSharp){
+	var note = elem.dataset.note;
+	//alert(note);
+	elem.style.background = isSharp ? 'black' : '#ccc';
+	synth.triggerAttackRelease(note, "16n");
+	event.stopPropagation();
+}
+
+function waveType(){
+	var checkBox = document.getElementById("myCheck");
+	var text = document.getElementById("text");
+
+	if(checkBox.checked == true){
+		text.style.display = "block";
+		type.style.display = "none";
+		//myCheck.style.
+		synth.oscillator.type = "sine";
+	}
+	else{
+		text.style.display = "none";
+		type.style.display = "block";
+		synth.oscillator.type = "square";
+	}
+}
+</script>
+
+
+</body>
+
+</html>
